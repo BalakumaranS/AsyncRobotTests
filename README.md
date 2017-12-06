@@ -36,11 +36,6 @@ pybot --prerunmodifier <path_to_file>/PrerunUtility.py:<path to previous output.
                              --prerebotmodifier PostrunUtility.py  tests/
 ```
 
-## Authors
-
-* **Bala Kumaran** - *Initial work* - (https://github.com/BalakumaranS)
-
-
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details

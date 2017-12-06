@@ -34,7 +34,6 @@ while running the Robot tests,
 ```
 pybot --prerunmodifier <path_to_file>/PrerunUtility.py:<path to previous output.xml/ None if a fresh execution>
                              --prerebotmodifier PostrunUtility.py  tests/
-
 ```
 
 ## Authors

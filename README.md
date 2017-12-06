@@ -18,12 +18,8 @@ http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#pro
 
 
 ### Prerequisites
-
-you can run these scripts as Modifiers while running robot tests to enable running tests in an interrupted fashion
-
-```
-RobotFramework
-```
+For the tests written using Robot Framework, you can run these scripts as Modifiers while running robot tests to enable running tests in 
+a Pause and Play mode
 
 ### Installing
 

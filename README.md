@@ -23,9 +23,13 @@ a Pause and Play mode
 
 ### Installing
 
-A step by step series of examples that tell you have to get a development env running
+Keywords on which you want to pass/stop the execution intermittently need to be mentioned in a flat file in the same working directory as async_keywords.txt
+```
+Keyword1, Keyword2
 
-Say what the step will be
+```
+
+while running the Robot tests,
 
 ```
 pybot --prerunmodifier <path_to_file>/PrerunUtility.py:<path to previous output.xml/ None if a fresh execution>

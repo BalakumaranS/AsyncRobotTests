@@ -31,43 +31,54 @@ class PrerunUtility(SuiteVisitor):
 
             if test_info is None or len(test_info) == len(_.keywords):
                 test_info = {}
-
             logger.console("Keyword in the test before Parsing >>>>>>>>>>>>>>>>>>>>>>"+str(_.keywords))
             new_keywords = []
+            async_kw_flag = False
             for keyword in _.keywords:
-                if test_info and "log variables" == str(keyword).lower():
-                    if test_info.get("Log Variables"):
-                        for variables in test_info.get("Log Variables")["msg"]["text"]:
+                if test_info:
+                    if test_info.get("log variables"):
+                        for variables in test_info.get("log variables")["msg"]["text"]:
                             variable, value = variables.split("=", 1)
-                            if variable.replace(" ","") not in RESERVED_VARIABLES:
+                            if str(variable.replace(" ","")) not in RESERVED_VARIABLES:
                                 try:
                                     if variable[0] == "@":
                                         variable = variable.replace("@","$")
-                                        value = value.replace("[","").replace("]","").replace("|",",")
-                                    new_keywords.insert(0, _.keywords.create("Set Test Variable", args=[variable.replace(" ",""),value.split(",")]))
+                                        value = value.replace("[","").replace("]","",value,1).replace("|",",").replace(" ","")
+                                    elif variable[0] == "&":
+                                        value = value.replace("{","",1)[::-1].replace("}","",1).replace(" ","")[::-1]
+                                        value = str(value).split("|")
+
+                                    if type(value) is list:
+                                        new_keywords.insert(0, _.keywords.create("Set Test Variable", args=[variable.replace(" ","")]+value))
+                                    else:
+                                        new_keywords.insert(0, _.keywords.create("Set Test Variable", args=[variable.replace(" ",""),str(value).lstrip()]))
                                 except:
                                     continue
 
-                if str(keyword) in ASYNC_KEYWORDS and new_keywords:
+                if str(keyword) in ASYNC_KEYWORDS and \
+                        [kw for kw in new_keywords if str(kw).lower() not in BUILTIN_KEYWORDS]:
                     logger.console("Sybot:BatchExecutorPrerunUtility:INFO ==> Pausing the test at "+str(keyword))
                     break
                 else:
                     if test_info:
-                        if str(keyword).lower() in test_info:
+                        if str(keyword).lower() in test_info and not async_kw_flag:
                             if str(test_info[str(keyword).lower()]["status"]["attrib"]["status"]) == "PASS":
                                 logger.console("Skybot:BatchExecutorPrerunUtility:INFO ==> Skipping the "
                                                "Keyword "+str(keyword)+" as it already passed in previous execution")
                             else:
                                 new_keywords.append(keyword)
                         else:
+                            if str(keyword) in ASYNC_KEYWORDS:
+                                async_kw_flag = True
                             new_keywords.append(keyword)
                     else:
                         new_keywords.append(keyword)
 
             if new_keywords:
+                new_keywords.append(_.keywords.create("Log Variables"))
                 _.keywords = new_keywords
 
-            logger.console("After Parsing >>>>>>>>>>>>>>>>>>>>>>"+str(_.keywords))
+            logger.console("After Parsing >>>>>>>>>>>>>>>>>>>>>>"+str([kw for kw in _.keywords if "Set Test Variable" not in str(kw)]))
 
             if len(_.keywords) != 0:
                 tests_in_suite.append(_)

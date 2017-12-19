@@ -19,7 +19,7 @@ BUILTIN_KEYWORDS = [str(_).lower().replace("_"," ") for _ in dir(BuiltIn) if not
 with open(os.path.join("async_keywords.txt")) as kfile:
     ASYNC_KEYWORDS = [str(_).rstrip() for _ in kfile.readline().split(",")]
 
-class RobotPrerunUtility(SuiteVisitor):
+class PrerunUtility(SuiteVisitor):
 
     def __init__(self, recent_output):
         self.recent_output = None
@@ -42,7 +42,6 @@ class RobotPrerunUtility(SuiteVisitor):
 
             logger.console("Keyword in the test before Parsing >>>>>>>>>>>>>>>>>>>>>>"+str(_.keywords))
             new_keywords = []
-            async_kw_flag = 0
             self.kw_counter = {}
             if test_info:
                 if test_info.get("log variables"):

@@ -1,12 +1,13 @@
 __author__ = 'bala'
 
+
 import xml.etree.ElementTree as ET
 from robot.api import ResultVisitor
 from robot.api import logger
 from robot import rebot
 from ParseRobotOutput import RobotOutputParser
 
-class PostrunUtility(ResultVisitor):
+class RebotPostrunUtility(ResultVisitor):
 
     def start_suite(self, suite):
         logger.console("Post run Start suite")
@@ -36,18 +37,21 @@ class PostrunUtility(ResultVisitor):
                 if str(testcase.attrib["name"]) == str(test):
                     logger.console("Starting the Test "+str(test))
                     i = 0
-                    for kw, props in test_info.iteritems():
-                        item = ET.Element('kw')
-                        item.attrib["name"] = str(kw).title()
-                        if props.get("msg"):
-                            for msg in props["msg"].get("text"):
-                                msgitem = ET.SubElement(item,"msg")
-                                msgitem.text = msg
-                                for attr in props["msg"].get("attrib"):
-                                    msgitem.attrib[attr] = props["msg"]["attrib"][attr]
-                        statusitem = ET.SubElement(item,"status")
-                        for status in props["status"]["attrib"]:
-                            statusitem.attrib[status] = props["status"]["attrib"][status]
-                        testcase.insert(i, item)
-                        i+=1
+                    for kw, props_set in test_info.iteritems():
+                        if not props_set:
+                            continue
+                        for props in props_set:
+                            item = ET.Element('kw')
+                            item.attrib["name"] = str(kw).title()
+                            if props.get("msg"):
+                                for msg in props["msg"].get("text"):
+                                    msgitem = ET.SubElement(item,"msg")
+                                    msgitem.text = msg
+                                    for attr in props["msg"].get("attrib"):
+                                        msgitem.attrib[attr] = props["msg"]["attrib"][attr]
+                            statusitem = ET.SubElement(item,"status")
+                            for status in props["status"]["attrib"]:
+                                statusitem.attrib[status] = props["status"]["attrib"][status]
+                            testcase.insert(i, item)
+                            i+=1
             tree.write("output.xml")

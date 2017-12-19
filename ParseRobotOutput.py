@@ -23,9 +23,11 @@ class RobotOutputParser(object):
                 for kw in test.iter("kw"):
                     if keyword:
                         if kw.attrib["name"] == keyword:
-                            return { str(kw.attrib["name"]).lower(): self._get_kwdetails()}
-
-                    keywords_info[str(kw.attrib["name"]).lower()] = self._get_kwdetails(kw)
+                            return { str(kw.attrib["name"]).lower(): [self._get_kwdetails(kw)]} # needs refactoring
+                    if str(kw.attrib["name"]).lower() not in keywords_info:
+                        keywords_info[str(kw.attrib["name"]).lower()] = [self._get_kwdetails(kw)]
+                    else:
+                        keywords_info[str(kw.attrib["name"]).lower()].append(self._get_kwdetails(kw))
         return keywords_info
 
     def _get_kwdetails(self, kw):
@@ -37,9 +39,10 @@ class RobotOutputParser(object):
                                     "attrib": _.attrib
                                  }
             else:
-                kw_info[_.tag]["text"].append(_.text),
+                kw_info[_.tag]["text"].append(_.text)
         return kw_info
 
     def _write_output(self):
         self.tree.write(self.robot_output_file)
+
 

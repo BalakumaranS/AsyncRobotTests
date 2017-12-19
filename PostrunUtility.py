@@ -7,7 +7,7 @@ from robot.api import logger
 from robot import rebot
 from ParseRobotOutput import RobotOutputParser
 
-class RebotPostrunUtility(ResultVisitor):
+class PostrunUtility(ResultVisitor):
 
     def start_suite(self, suite):
         logger.console("Post run Start suite")
